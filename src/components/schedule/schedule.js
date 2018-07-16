@@ -1,38 +1,41 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 import Gradient from '../gradient';
 import ScheduleCourse from './scheduleCourses';
 import ProgressTracker from './progressTracker';
 
-
 class Schedule extends Component {
 
-  renderCourse () {
-    const data = this.props.courses
+    renderCourses() {
+        const data = this.props.courses
 
-    return data.map((course, index) => {
-      if(course.enrolled) {
-        return <ScheduleCourse {...course} key={index}/>
-      }
-    })
-  }
-
-  render() {
-      return (
-          <div className="schedule">
-            <h1 className="schedule__title">My Schedule</h1>
-            { this.renderCourse() }
-            <ProgressTracker/>
-            <Gradient/>
-          </div>
-        )
-      }
+        return data.map((course, index) => {
+            if(course.enrolled && this.amountEnrolled != 5) {
+                this.amountEnrolled++;
+                return <ScheduleCourse {...course} key={index}/>
+            }
+        })
     }
 
+
+    render() {
+        this.amountEnrolled = 0
+        return (
+            <div className="schedule">
+                <h1 className="schedule__title">My Schedule</h1>
+                { this.renderCourses() }
+                <ProgressTracker amountPossible={5} amountEnrolled={this.amountEnrolled}/>
+                <Gradient/>
+            </div>
+        )
+    }
+}
+
 function mapStateToProps(state) {
-  return {
-    courses: state.courses
-  }
-};
+    return {
+        courses: state.courses
+    }
+}
 
 export default connect(mapStateToProps)(Schedule);
